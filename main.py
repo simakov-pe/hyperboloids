@@ -4,37 +4,39 @@ from mpl_toolkits.mplot3d import Axes3D
 import rotateFunction
 
 
-def main():
-    fig = plt.figure(figsize=(10, 10))
-    ax_3d = fig.add_subplot(projection='3d')
-
+class hyperboloid:
     x = np.arange(-5, 5, 0.2)
     y = np.arange(-5, 5, 0.2)
-    x, y = np.meshgrid(x, y)
-
+    z = 0
     a = 1
     b = 1
     c = 1
-    alpha = np.pi/3
+    angle = 0
+    def __init__(self, a=1, b=1, c=1, angle=0):
+        self.a = a
+        self.b = b
+        self.c = c
+        self.angle = angle
+        self.x, self.y = np.meshgrid(self.x, self.y)
+        self.z = np.sqrt(c**2 * (1 + self.x**2/a**2 + self.y**2/b**2))
+        self.x, self.y, self.z = rotateFunction.rotate_function((0,0,0), (0,1,0), self.x, self.y, self.z, angle)
 
-    z1 = np.sqrt(c**2 * (((x*np.cos(alpha) - y*np.sin(alpha))**2/a**2) + ((x*np.sin(alpha) + y*np.cos(alpha))**2/b**2) + 1))
-    z2 = -z1
-
-    ax_3d.plot_surface(x, y, z1, color='g')
-    ax_3d.plot_surface(x, y, z2, color='g')
-
-
-    # Rotate points around y axis by 90 degrees
-    x_rot, y_rot, z_rot = rotateFunction.rotate_function((0, 0, 0), (0, 1, 0), x, y, z1, np.pi/2)
-    ax_3d.plot_surface(x_rot, y_rot, z_rot, color='r')
-    x_rot, y_rot, z_rot = rotateFunction.rotate_function((0, 0, 0), (0, 1, 0), x, y, z2, np.pi/2)
-    ax_3d.plot_surface(x_rot, y_rot, z_rot, color='r')
-
+def show(hb1, hb2, size):
+    fig = plt.figure(figsize=(size, size))
+    ax_3d = fig.add_subplot(projection='3d')
+    ax_3d.plot_wireframe(hb1.x, hb1.y, hb1.z, color = 'g')
+    ax_3d.plot_wireframe(hb2.x, hb2.y, hb2.z, color = 'r')
     ax_3d.set_xlabel('x')
     ax_3d.set_ylabel('y')
     ax_3d.set_zlabel('z')
-
     plt.show()
+
+
+def main():
+    fig1 = hyperboloid(1, 1, 1, 0)
+    fig2 = hyperboloid(1, 1, 1, np.pi/4)
+    show(fig1, fig2, 10)
+
 
 if __name__ == '__main__':
     main()
